@@ -1,5 +1,6 @@
 package ek.osnb.jpa.orders.controller;
 
+import ek.osnb.jpa.orders.dto.OrderDto;
 import ek.osnb.jpa.orders.model.Order;
 import ek.osnb.jpa.orders.model.OrderStatus;
 import ek.osnb.jpa.orders.service.OrderService;
@@ -15,35 +16,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-
     private final OrderService orderService;
-    public OrderController(OrderService orderService){
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders(@RequestParam(required = false) OrderStatus status) {
-        return  ResponseEntity.ok(orderService.getAllOrders(status));
+    public ResponseEntity<List<OrderDto>> getAllOrders(@RequestParam(required = false) OrderStatus status) {
+        return ResponseEntity.ok(orderService.getAllOrders(status));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id){
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(orderService.getOrderById(id));
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder (@RequestBody Order order){
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(order));
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
+    public ResponseEntity<OrderDto> updateOrder(@PathVariable Long id, @RequestBody OrderDto orderDto) {
         try {
-            return ResponseEntity.ok(orderService.updateOrder(id,order));
+            return ResponseEntity.ok(orderService.updateOrder(id, orderDto));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -54,7 +54,7 @@ public class OrderController {
         try {
             orderService.deleteOrder(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
